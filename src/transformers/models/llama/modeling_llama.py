@@ -594,7 +594,9 @@ class LlamaModel(LlamaPreTrainedModel):
 
             # TODO: Knockout neurons
             if knockout_neurons:
-                print("Knocking out neurons", knockout_neurons)
+                for layer_id, emb_id in knockout_neurons:
+                    if layer_id-1 == idx and idx != 0:
+                        hidden_states[0][0][emb_id] = 0.0
 
             if use_cache:
                 next_decoder_cache += (layer_outputs[2 if output_attentions else 1],)
@@ -602,7 +604,7 @@ class LlamaModel(LlamaPreTrainedModel):
             if output_attentions:
                 all_self_attns += (layer_outputs[1],)
 
-        # TODO: Knockout neurons in last layer
+        # TODO: Knockout neurons in last layer - already taken care of in the previous TODO
 
         hidden_states = self.norm(hidden_states)
 
